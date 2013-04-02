@@ -354,8 +354,8 @@ CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 CFLAGS_MODULE   =
 AFLAGS_MODULE   =
 LDFLAGS_MODULE  =
-CFLAGS_KERNEL   = -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -fforce-addr -ffast-math -fsingle-precision-constant -marm -funroll-loops
-AFLAGS_KERNEL   = -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -fforce-addr -ffast-math -fsingle-precision-constant -marm -funroll-loops
+CFLAGS_KERNEL   = -O2 -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -fforce-addr -ffast-math -fsingle-precision-constant -marm -funroll-loops
+AFLAGS_KERNEL   = -O2 -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -fforce-addr -ffast-math -fsingle-precision-constant -marm -funroll-loops
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
 
@@ -374,7 +374,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -Wno-format-security \
 		   -fno-delete-null-pointer-checks
 KBUILD_AFLAGS_KERNEL :=
-KBUILD_CFLAGS_KERNEL :=
+KBUILD_CFLAGS_KERNEL := -O2 -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -fforce-addr -ffast-math -fsingle-precision-constant -marm -funroll-loops
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 KBUILD_AFLAGS_MODULE  := -DMODULE
 KBUILD_CFLAGS_MODULE  := -DMODULE
