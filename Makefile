@@ -243,10 +243,17 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 	  else if [ -x /bin/bash ]; then echo /bin/bash; \
 	  else echo sh; fi ; fi)
 
+
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
-HOSTCXXFLAGS = -O2
+ifdef CONFIG_CC_OPTIMIZE_O3
+HOSTCFLAGS   = -Wall -W -Wmissing-prototypes -Wstrict-prototypes -Wno-unused-parameter -Wno-sign-compare -O3 -fomit-frame-pointer -fno-delete-null-pointer-checks
+HOSTCXXFLAGS = -O3 -Wall -W -fno-delete-null-pointer-checks
+else
+HOSTCFLAGS   = -Wall -W -Wmissing-prototypes -Wstrict-prototypes -Wno-unused-parameter -Wno-sign-compare -O2 -fomit-frame-pointer -fno-delete-null-pointer-checks
+HOSTCXXFLAGS = -O2 -Wall -W -fno-delete-null-pointer-checks
+endif
+
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
@@ -354,6 +361,7 @@ CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 CFLAGS_MODULE   =
 AFLAGS_MODULE   =
 LDFLAGS_MODULE  =
+
 CFLAGS_KERNEL   = -O2 -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -fforce-addr -ffast-math -fsingle-precision-constant -marm -funroll-loops
 AFLAGS_KERNEL   = -O2 -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -fforce-addr -ffast-math -fsingle-precision-constant -marm -funroll-loops
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
@@ -372,9 +380,17 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
-		   -fno-delete-null-pointer-checks
+		   -fno-delete-null-pointer-checks \
+		   -mtune=cortex-a8 -march=armv7-a -mfpu=neon \
+		   -ftree-vectorize 
 KBUILD_AFLAGS_KERNEL :=
+
+ifdef CONFIG_CC_OPTIMIZE_O3
+KBUILD_CFLAGS_KERNEL := -O3 -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -fforce-addr -ffast-math -fsingle-precision-constant -marm -funroll-loops
+else
 KBUILD_CFLAGS_KERNEL := -O2 -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -fforce-addr -ffast-math -fsingle-precision-constant -marm -funroll-loops
+endif
+
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 KBUILD_AFLAGS_MODULE  := -DMODULE
 KBUILD_CFLAGS_MODULE  := -DMODULE
@@ -564,8 +580,9 @@ all: vmlinux
 
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os
-else
-KBUILD_CFLAGS	+= -O2
+endif
+ifdef CONFIG_CC_OPTIMIZE_O3
+KBUILD_CFLAGS	+= -O3
 endif
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
